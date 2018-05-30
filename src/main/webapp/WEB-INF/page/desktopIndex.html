@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<style type="text/css">
+	body {cursor:default;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-user-select:none;user-select:none;}
+	h1 {text-align:center;}
+	p {text-indent:2em;padding-left:1em;padding-right:1em;}
+	textarea {width:90%;resize:none;display:block;margin:auto;}
+	span:hover {background-color:#BBBBBB;}
+	#submit {display:block;margin:auto;text-align:center;}
+</style>
+<script type="text/javascript">
+	function get(id) {
+		return document.getElementById(id);
+	}
+	var oldmain;
+	window.onload = function() {
+		oldmain = get("main").innerHTML;
+	}
+	function resetmain() {
+		get("main").innerHTML = oldmain;
+	}
+	function getNovelList() {
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function() {
+			if(request.readyState == 4 && request.status == 200) {
+				var response = request.responseText;
+				get("main").innerHTML = response;
+			}
+		}
+		request.open("GET", "/getNovelList", true);
+		request.send();
+	}
+	function getChapterList(novel) {
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function() {
+			if(request.readyState == 4 && request.status == 200) {
+				var response = request.responseText;
+				get("main").innerHTML = response;
+			}
+		}
+		request.open("GET", "/getChapterList?novel=" + novel, true);
+		request.send();
+	}
+	function getChapter(chapter, novel) {
+		var param = "?novel=" + novel + "&chapter=" + chapter;
+		var requestContent = new XMLHttpRequest();
+		requestContent.onreadystatechange = function() {
+			if(requestContent.readyState == 4 && requestContent.status == 200) {
+				var response = requestContent.responseText;
+				get("main").innerHTML = response;
+			}
+		}
+		requestContent.open("GET", "/getChapterContent" + param, true);
+		var requestNovel = new XMLHttpRequest();
+		requestNovel.onreadystatechange = function() {
+			if(requestNovel.readyState == 4 && requestNovel.status == 200) {
+				var response = requestNovel.responseText;
+				get("novel").innerHTML = response;
+			}
+		}
+		requestNovel.open("GET", "/getNovelName" + param, true);
+		var requestChapter = new XMLHttpRequest();
+		requestChapter.onreadystatechange = function() {
+			if(requestChapter.readyState == 4 && requestChapter.status == 200) {
+				var response = requestChapter.responseText;
+				get("chapter").innerHTML = response;
+			}
+		}
+		requestChapter.open("GET", "/getChapterName" + param, true);
+		var requestOtherChapter = new XMLHttpRequest();
+		requestOtherChapter.onreadystatechange = function() {
+			if(requestOtherChapter.readyState == 4 && requestOtherChapter.status == 200) {
+				var response = requestOtherChapter.responseText;
+				get("otherchapter").innerHTML = response;
+			}
+		}
+		requestOtherChapter.open("GET", "/getOtherChapter" + param, true);
+		var requestMessage = new XMLHttpRequest();
+		requestMessage.onreadystatechange = function() {
+			if(requestMessage.readyState == 4 && requestMessage.status == 200) {
+				var response = requestMessage.responseText;
+				get("message").innerHTML = response;
+			}
+		}
+		requestMessage.open("GET", "/getMessage" + param, true);
+		var requestOtherMessage = new XMLHttpRequest();
+		requestOtherMessage.onreadystatechange = function() {
+			if(requestOtherMessage.readyState == 4 && requestOtherMessage.status == 200) {
+				var response = requestOtherMessage.responseText;
+				get("othermessage").innerHTML = response;
+			}
+		}
+		requestOtherMessage.open("GET", "/getOtherMessage" + param, true);
+		requestOtherMessage.send();
+		requestMessage.send();
+		requestOtherChapter.send();
+		requestChapter.send();
+		requestNovel.send();
+		requestContent.send();
+	}
+	function addMessage(chapter, novel) {
+		var param = "?novel=" + novel + "&chapter=" + chapter + "&text=" + get("text").value;
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function() {
+			if(request.readyState == 4 && request.status == 200) {
+				getChapter(chapter, novel);
+			}
+		}
+		request.open("GET", "/addMessage" + param, true);
+		request.send();
+	}
+</script>
+<title>夜的十三章</title>
+</head>
+<body>
+<div style="width:25%;float:left;padding:1em;">
+	正在浏览<span style="float:right;" onclick="resetmain()">切换</span>
+	<div style="border:double;">
+		<p id="novel">未选择</p>
+		<p id="chapter">章节未选择<p>
+	</div>
+	章节列表
+	<div style="border:double;" id="otherchapter">
+		<p>未选择</p>
+	</div>
+</div>
+<div style="background-color:#AAAAAA;width:50%;float:left;" id="main">
+	<h1><span onclick="getNovelList()">开始阅读</span></h1>
+</div>
+<div style="width:20%;float:left;padding:1em;">
+	当前评论
+	<div style="border:double;" id="message">
+		<p>暂无</p>
+	</div>
+	其他评论
+	<div style="border:double;" id="othermessage">
+		<p>暂无</p>
+	</div>
+</div>
+</body>
+</html>
